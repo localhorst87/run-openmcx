@@ -1,0 +1,27 @@
+name: 'Run OpenMCx'
+description: 'An action script that will perform simulations using the 
+              open-source Co-Simulation Middleware eclipse OpenMCx'
+inputs:
+  ssd: 
+    description: 'Path to the System Structure Definition (SSD) file that define
+                  the simulation that shall be executed. For running more than
+                  one single simulation, separate the paths for each SSD file
+                  using a white space.
+                  Examples: 
+                  Single file: "./path/to/system.ssd"
+                  Multiple files: "./path/to/system1.ssd ./path/to/system2.ssd"'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout openmcx
+      uses: actions/checkout@v4
+      with:
+        repository: eclipse/openmcx
+        path: 'openmcx'
+    - name: check available files
+      run: ls -la
+    - name: check base path
+      run: pwd
+    - name: check 
+      run: echo ${{ github.action_path }}
