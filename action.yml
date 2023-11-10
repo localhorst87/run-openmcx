@@ -20,8 +20,11 @@ runs:
         repository: eclipse/openmcx
         path: 'openmcx'
     - name: check available files
+      shell: bash
       run: ls -la
-    - name: check base path
+    - name: check base path#
+      shell: bash
       run: pwd
-    - name: check 
+    - name: check
+      shell: bash
       run: echo ${{ github.action_path }}
