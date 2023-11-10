@@ -15,6 +15,7 @@ runs:
   using: "composite"
   steps:
     - name: Install openmcx prerequisites
+      shell: bash
       run: |
         sudo apt update
         sudo apt install -y cmake git
@@ -28,6 +29,7 @@ runs:
         path: 'openmcx'
     - name: build openmcx
       working-directory: openmcx
+      shell: bash
       run: ./build.sh
     - name: run simulation
       shell: bash
