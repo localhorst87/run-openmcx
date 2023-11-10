@@ -30,6 +30,7 @@ runs:
       working-directory: openmcx
       run: ./build.sh
     - name: run simulation
+      shell: bash
       run: |
         ssdFiles=(${{ inputs.ssd }})
         nSimulations=${#ssdFiles[@]}
