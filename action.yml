@@ -11,6 +11,20 @@ inputs:
                   Single file: "./path/to/system.ssd"
                   Multiple files: "./path/to/system1.ssd ./path/to/system2.ssd"'
     required: true
+  resultDir:
+    description: 'Path to the directory where the simulation results shall be 
+                  stored. If resultDir is set to "./sim-res", and ssd is set 
+                  to "./path/to/my_system1.ssd ./path/to/system_2.ssd" the
+                  results are stored as follows:
+                  ./sim-res/my_system1/<FMU_Name>_in.csv
+                  ./sim-res/my_system1/<FMU_Name>_res.csv
+                  ./sim-res/system_2/<FMU_Name>_in.csv
+                  ./sim-res/system_2<FMU_Name>_res.csv
+                  where <FMU_Name>_in represents the inputs fed to the respective
+                  FMU in the system and <FMU_Name>res represents the outputs of 
+                  the respective FMU in the system.'
+    required: false
+    default: ./simulation-results
 runs:
   using: "composite"
   steps:
@@ -26,6 +40,7 @@ runs:
       uses: actions/checkout@v4
       with: 
         repository: eclipse/openmcx
+        ref: 6e5e7bfc14bc4fe00fb2eeb392013f3942d3b0d4
         path: 'openmcx'
     - name: build openmcx
       working-directory: openmcx
@@ -35,5 +50,6 @@ runs:
       shell: bash
       run: |
         ssdFiles=(${{ inputs.ssd }})
-        nSimulations=${#ssdFiles[@]}
-        for ssdPath in ${ssdFiles[@]}; do ./openmcx/install/openmcx $ssdPath -v; done
+        outputDirectory={{ inputs.resultDir }}
+        if [[ ${outputDirectory: -1} = / ]]; then outputDirectory=${outputDirectory: 0:-1}; fi
+        for ssdPath in ${ssdFiles[@]}; do ssdPathSplitted=(${ssdPath//// }); systemName=${ssdPathSplitted[-1]: 0: -4};./openmcx/install/openmcx $ssdPath -v -r $outputDirectory/$systemName; done
