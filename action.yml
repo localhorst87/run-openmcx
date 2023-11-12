@@ -50,6 +50,6 @@ runs:
       shell: bash
       run: |
         ssdFiles=(${{ inputs.ssd }})
-        outputDirectory={{ inputs.resultDir }}
+        outputDirectory=${{ inputs.resultDir }}
         if [[ ${outputDirectory: -1} = / ]]; then outputDirectory=${outputDirectory: 0:-1}; fi
         for ssdPath in ${ssdFiles[@]}; do ssdPathSplitted=(${ssdPath//// }); systemName=${ssdPathSplitted[-1]: 0: -4};./openmcx/install/openmcx $ssdPath -v -r $outputDirectory/$systemName; done
