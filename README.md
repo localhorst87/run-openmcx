@@ -4,7 +4,7 @@ A composite github action to ease runing simulations in the open source simulato
 ## Usage
 
 Use this github action in a github actions pipeline as follows:
-```
+```yaml
 steps:
   - name: run openmcx
     uses: localhorst87/run-openmcx@v0.2.0
