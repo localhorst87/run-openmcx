@@ -6,10 +6,13 @@ inputs:
     description: 'Path to the System Structure Definition (SSD) file that define
                   the simulation that shall be executed. For running more than
                   one single simulation, separate the paths for each SSD file
-                  using a white space.
+                  using a white space, or indicate a path to a folder that
+                  contains the SSD files (in this case it must be made sure
+                  that this folder contains ONLY your SSD files!)
                   Examples: 
                   Single file: "./path/to/system.ssd"
-                  Multiple files: "./path/to/system1.ssd ./path/to/system2.ssd"'
+                  Multiple files: "./path/to/system1.ssd ./path/to/system2.ssd"
+                  Folder: "./path/to/ssd-folder"'
     required: true
   resultDir:
     description: 'Path to the directory where the simulation results shall be 
@@ -49,7 +52,8 @@ runs:
     - name: run simulation
       shell: bash
       run: |
-        ssdFiles=(${{ inputs.ssd }})
+        ssdInput=${{ inputs.ssd }}
+        if [[ ${ssdInput: -4} != .ssd ]]; then ssdFiles=($(ls $ssdInput)); else ssdFiles=(${ssdInput}); fi
         outputDirectory=${{ inputs.resultDir }}
         if [[ ${outputDirectory: -1} = / ]]; then outputDirectory=${outputDirectory: 0:-1}; fi
         for ssdPath in ${ssdFiles[@]}; do ssdPathSplitted=(${ssdPath//// }); systemName=${ssdPathSplitted[-1]: 0: -4};./openmcx/install/openmcx $ssdPath -v -r $outputDirectory/$systemName; done
