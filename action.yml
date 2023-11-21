@@ -53,7 +53,24 @@ runs:
       shell: bash
       run: |
         ssdInput=${{ inputs.ssd }}
-        if [[ ${ssdInput: -4} != .ssd ]]; then ssdFiles=($(ls $ssdInput)); else ssdFiles=(${ssdInput}); fi
+        # check if a directory is given or file names
+        if [[ ${ssdInput: -4} != .ssd ]]
+        then
+          # directory given
+          if [[ ${ssdInput: -1} = / ]]; then ssdDirectory=${ssdInput: 0:-1}; else ssdDirectory=$ssdInput; fi
+          ssdFiles=($(ls $ssdInput))
+          # join complete path to all ssd files
+          for i in ${!ssdFiles[@]}; do ssdFiles[$i]=$ssdDirectory/${ssdFiles[$i]}; done
+        else
+          # file path(s) given
+          ssdFiles=(${ssdInput})
+        fi
         outputDirectory=${{ inputs.resultDir }}
         if [[ ${outputDirectory: -1} = / ]]; then outputDirectory=${outputDirectory: 0:-1}; fi
-        for ssdPath in ${ssdFiles[@]}; do ssdPathSplitted=(${ssdPath//// }); systemName=${ssdPathSplitted[-1]: 0: -4};./openmcx/install/openmcx $ssdPath -v -r $outputDirectory/$systemName; done
+        # run openmcx
+        for ssdPath in ${ssdFiles[@]}
+        do
+          ssdPathSplitted=(${ssdPath//// })
+          systemName=${ssdPathSplitted[-1]: 0: -4}
+          ./openmcx/install/openmcx $ssdPath -v -r $outputDirectory/$systemName
+        done
